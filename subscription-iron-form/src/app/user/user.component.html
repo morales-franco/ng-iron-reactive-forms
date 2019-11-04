@@ -1,0 +1,487 @@
+<div class="card border-primary mt-3">
+    <div class="card-header">
+        Subscribe ! Become to an Iron member ;) Welcome {{ userForm.get('name').value + ' '   + userForm.get('surname').value}}
+    </div>
+    <form novalidate     
+          (ngSubmit)="save()"
+          [formGroup]="userForm">
+
+        <div class="card-body">
+            <h5 class="card-title">Please complete the following fields</h5>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="name">Name</label>
+
+                <div class="col-md-8">
+                    <input type="text" 
+                           class="form-control" 
+                           id="name" 
+                           formControlName="name" 
+                           [ngClass]="{'is-invalid': (userForm.get('name').touched ||
+                                                      userForm.get('name').dirty) &&
+                                                      !userForm.get('name').valid }"/>
+
+                    <div class="invalid-feedback" *ngIf="userForm.get('name').hasError('required')">
+                        Please enter your name.
+                    </div>
+                    <div class="invalid-feedback" *ngIf="userForm.get('name').hasError('minlength')">
+                        The first name must be longer than 5 characters.
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="surname">Surname</label>
+
+                <div class="col-md-8">
+                    <input type="text" 
+                           class="form-control" 
+                           id="surname" 
+                           formControlName="surname"
+                           [ngClass]="{'is-invalid': (userForm.get('surname').touched ||
+                                                      userForm.get('surname').dirty) &&
+                                                      !userForm.get('surname').valid }"/>
+
+
+                    <div class="invalid-feedback" *ngIf="userForm.get('surname').hasError('required')">
+                        Please enter your surname.
+                    </div>
+                    <div class="invalid-feedback" *ngIf="userForm.get('surname').hasError('minlength')">
+                        The first name must be longer than 3 characters.
+                    </div>
+                    <div class="invalid-feedback" *ngIf="userForm.get('surname').hasError('maxlength')">
+                            The surname must be shorter than 20 characters.
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="username">Username</label>
+
+                <div class="col-md-8">
+
+                    <input type="text" 
+                           class="form-control" 
+                           id="username"
+                           formControlName="username"
+                           [ngClass]="{'is-invalid': (userForm.get('username').touched ||
+                                                      userForm.get('username').dirty) &&
+                                                      !userForm.get('username').valid }"/>
+
+                    
+                    <div class="invalid-feedback" *ngIf="userForm.get('username').hasError('required')">
+                        Please enter your username.
+                    </div>
+                    <div class="invalid-feedback" *ngIf="userForm.get('username').hasError('maxlength')">
+                            The username must be shorter than 50 characters.
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div formGroupName="emailGroup">
+
+                <div class="form-group row">
+                    <label class="col-md-2 col-form-label" for="email">Email</label>
+
+                    <div class="col-md-8">
+                        <input type="email" 
+                            class="form-control" 
+                            id="email" 
+                            formControlName="email" 
+                            [ngClass]="{'is-invalid': (userForm.get('emailGroup.email').touched ||
+                                                       userForm.get('emailGroup.email').dirty) &&
+                                                       !userForm.get('emailGroup.email').valid }"/>
+
+                        <div class="invalid-feedback" *ngIf="userForm.get('emailGroup.email').hasError('required')">
+                             Please enter your email.
+                        </div>
+                        <div class="invalid-feedback" *ngIf="userForm.get('emailGroup.email').hasError('email')">
+                             Please enter a valid email
+                        </div>
+                    </div>
+
+                </div>
+
+            <!--@FM: ValidationGroup & show error messages: using invalid-feedback d-block to multiple validation - specially in validationGroups  -->
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="confirmEmail">Confirm Email</label>
+
+                <div class="col-md-8">
+                    <input type="email" 
+                           class="form-control" 
+                           id="confirmEmail" 
+                           formControlName="confirmEmail" 
+                           [ngClass]="{'is-invalid': (userForm.get('emailGroup.confirmEmail').touched ||
+                                                      userForm.get('emailGroup.confirmEmail').dirty) &&
+                                                      !userForm.get('emailGroup.confirmEmail').valid }"/>
+
+                     <!--@FM: ValidationGroup: when we're using invalid-feedback D-BLOCK bootstrap show Required message 
+                         because actually, when the page start all the fields required should be showed as a error message but in 
+                        bootstrap 4, this framework manages this error and only shows the messages when is-valid is true
+                        when we use d-block to show ALL message, this feature doesn't work.
+                        For this reason, we need to use userForm.get('emailGroup.confirmEmail').touched, in this way, the requiered message only
+                        will be show after the user touches the field
+                    -->
+                     <div *ngIf="userForm.get('emailGroup.confirmEmail').touched && userForm.get('emailGroup.confirmEmail').hasError('required')"
+                        class="invalid-feedback d-block">
+                        Please confirm your email
+                    </div>
+
+                    <div *ngIf="userForm.get('emailGroup.confirmEmail').hasError('email')"
+                          class="invalid-feedback d-block">
+                          Please enter a valid email
+                    </div>
+
+                    <div *ngIf="userForm.get('emailGroup').hasError('match')" 
+                          class="invalid-feedback d-block">
+                        The confirmation does not match the email address.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="countryId">Country</label>
+
+                <div class="col-md-8">
+                    <select class="form-control"
+                    formControlName="countryId" 
+                    [ngClass]="{'is-invalid': (userForm.get('countryId').touched ||
+                                               userForm.get('countryId').dirty) &&
+                                               !userForm.get('countryId').valid }">
+                        <option value="">Select</option>
+                        <option value="1">Argentina</option>
+                        <option value="2">Canada</option>
+                        <option value="3">New Zealand</option>
+                  </select>
+
+                  <div class="invalid-feedback" *ngIf="userForm.get('countryId').hasError('required')">
+                        Please select a country
+                   </div>
+                </div>
+
+            </div>
+
+
+
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label" for="sexId">Sex</label>
+
+                <div class="col-md-8">
+                    <div class="form-check form-check-inline">
+                         <label class="form-check-label">
+                            <input class="form-check-input" 
+                                type="radio" 
+                                formControlName="sexId"
+                                value="M">Male
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <label class="form-check-label">
+                            <input class="form-check-input" 
+                                    type="radio" 
+                                    formControlName="sexId"
+                                    value="F">Female
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <label class="form-check-label">
+                            <input class="form-check-input" 
+                                    type="radio" 
+                                    formControlName="sexId"
+                                    value="O">
+                            Other
+                        </label>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            <div class="form-group row mt-3">
+                    <div class="col-md-8">
+    
+                        <div class="form-check">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   id="hasGitHub"
+                                   formControlName="hasGitHub">
+                            <label class="form-check-label" for="hasGitHub">
+                              Do you have a Github repository? 
+                            </label>
+                        </div>
+    
+                    </div>
+    
+                </div>
+
+                <div class="form-group row" *ngIf="userForm.get('hasGitHub').value">
+                        <label class="col-md-2 col-form-label" for="name">GitHub Repository</label>
+        
+                        <div class="col-md-8">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="githubRepository" 
+                                   formControlName="githubRepository" 
+                                   [ngClass]="{'is-invalid': (userForm.get('githubRepository').touched ||
+                                                              userForm.get('githubRepository').dirty) &&
+                                                              !userForm.get('githubRepository').valid }"/>
+        
+                            <div class="invalid-feedback" *ngIf="userForm.get('githubRepository').hasError('required')">
+                                Please enter your Github.
+                            </div>
+                            <!-- <div class="invalid-feedback" *ngIf="userForm.get('name').hasError('minlength')">
+                                The first name must be longer than 5 characters.
+                            </div> -->
+                        </div>
+                    </div>
+
+
+            <div class="card border-success">
+                <div class="card-header">
+                    Skills
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Please add at least your three best skills!</p>
+                    <div class="table-responsive-sm">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr class="table-success">
+                                    <th scope="col" style="width: 5%;">#</th>
+                                    <th scope="col">Skill</th>
+                                    <th scope="col" style="width: 5%;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container formArrayName="skills"
+                                              *ngFor="let skill of skills.controls; let i=index" >
+                                    <tr>
+                                        <td>{{ i + 1 }}</td>
+                                        <td>
+                                            <input type="text" 
+                                                   class="form-control form-control-sm" 
+                                                   placeholder="Skill"
+                                                   [ngClass]="{'is-invalid': (skill.touched ||
+                                                                              skill.dirty) &&
+                                                                             !skill.valid }"
+                                                   id="{{ 'skill' + i }}" 
+                                                   [formControlName]="i"/>
+                                        </td>
+                                        <td>
+                                            <button type="button" 
+                                                    class="btn btn-outline-danger btn-sm"
+                                                    title="Delete this skill"
+                                                    (click)="deleteSkill(i)">Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                              </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer  text-right">
+                    <button type="button" 
+                            class="btn btn-outline-info"
+                            [disabled]="!skills.valid"
+                            (click)="addNewSkill()">Add new skill</button>
+                </div>
+            </div>
+
+
+            <div class="form-group row mt-3">
+                <div class="col-md-8">
+
+                    <div class="form-check">
+                        <input class="form-check-input" 
+                               type="checkbox" 
+                               id="hasDevExperience"
+                               formControlName="hasDevExperience">
+                        <label class="form-check-label" for="hasDevExperience">
+                          Do you have any dev experience? 
+                        </label>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card border-success" *ngIf="userForm.get('hasDevExperience').value" >
+                <div class="card-header">
+                    Experience!
+                </div>
+                <div class="card-body">
+
+                    <ng-container formArrayName="experiences" 
+                                   *ngFor="let experience of experiences.controls;let i = index;" >
+
+                    <ng-container [formGroupName]="i">
+
+                    <div class="form-group row mb-2">
+                        <label class="col-md-2 col-form-label" 
+                                attr.for="{{ 'companyName' + i }}" >Company name</label>
+
+                        <div class="col-md-10">
+                            <input type="text" 
+                                   class="form-control" 
+                                   placeholder="company name"
+                                   id="{{ 'companyName' + i }}" 
+                                   formControlName="companyName"
+                                   [ngClass]="{'is-invalid': (experience.get('companyName').touched ||
+                                                              experience.get('companyName').dirty) &&
+                                                              !experience.get('companyName').valid }" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-2">
+                        <label class="col-md-2 col-form-label"
+                               attr.for="{{ 'from' + i }}">From</label>
+
+                        <div class="col-md-4">
+                            <input type="date" 
+                                   class="form-control" 
+                                   id="{{ 'from' + i }}"
+                                   formControlName="from"
+                                   [ngClass]="{'is-invalid': (experience.get('from').touched ||
+                                                              experience.get('from').dirty) &&
+                                                              !experience.get('from').valid }"/>
+                        </div>
+
+                        <label class="col-md-2 col-form-label" 
+                               attr.for="{{ 'to' + i }}">To</label>
+
+                        <div class="col-md-4">
+                            <input type="date" 
+                                   class="form-control" 
+                                   id="{{ 'to' + i }}"
+                                   formControlName="to" 
+                                   [ngClass]="{'is-invalid': (experience.get('to').touched ||
+                                                              experience.get('to').dirty) &&
+                                                              !experience.get('to').valid }"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-2">
+                        <label class="col-md-2 col-form-label" 
+                               attr.for="{{ 'role' + i }}">Role</label>
+
+                        <div class="col-md-10">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="{{ 'role' + i }}"
+                                   formControlName="role"  
+                                   [ngClass]="{'is-invalid': (experience.get('role').touched ||
+                                                              experience.get('role').dirty) &&
+                                                              !experience.get('role').valid }"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-2">
+                        <label class="col-md-2 col-form-label"
+                               attr.for="{{ 'description' + i }}">Description</label>
+
+                        <div class="col-md-10">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="{{ 'description' + i }}"
+                                   formControlName="description"   />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="button" 
+                                class="btn btn-outline-danger btn-sm float-right"
+                                title="Delete experience"
+                                [disabled]="experiences.length === 1"
+                                (click)="deleteExperience(i)">Delete
+                            </button>
+                    </div>
+                    </div>
+                    <hr>
+                    </ng-container>
+                </ng-container>
+                </div>
+                <div class="card-footer  text-right">
+                    <button type="button" 
+                            class="btn btn-outline-info"
+                            [disabled]="!experiences.valid"
+                            (click)="addNewExperience()">Add new experience
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group row  mt-3">
+                <label class="col-md-2 col-form-label" for="comment">Comment</label>
+
+                <div class="col-md-10">
+                    <textarea class="form-control" 
+                              id="comment" 
+                              rows="3"
+                              formControlName="comment" 
+                              [ngClass]="{'is-invalid': (userForm.get('comment').touched ||
+                                                         userForm.get('comment').dirty) &&
+                                                         !userForm.get('comment').valid }">
+                              ></textarea>
+
+                    <div class="invalid-feedback" *ngIf="userForm.get('comment').hasError('maxlength')">
+                        The comment must be shorter than 100 characters.
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-8">
+
+                    <div class="form-check">
+                        <input class="form-check-input" 
+                               type="checkbox" 
+                               id="acceptConditions"
+                               [ngClass]="{'is-invalid': (userForm.get('acceptConditions').touched ||
+                                                          userForm.get('acceptConditions').dirty) &&
+                                                          !userForm.get('acceptConditions').valid }"
+                               formControlName="acceptConditions">
+
+                        <label class="form-check-label" for="acceptConditions">
+                              Accept terms and conditions
+                        </label>
+
+                        <div class="invalid-feedback" 
+                             *ngIf="userForm.get('acceptConditions').hasError('required')">
+                             Please accept the conditions
+                         </div>
+
+         
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+
+
+        </div>
+
+        <div class="card-footer">
+            <button type="button" class="btn btn-outline-primary">Back</button>
+            <button type="submit" class="btn btn-outline-success float-right">Save</button>
+        </div>
+
+    </form>
+</div>
+
+<br>Value: {{ userForm.value | json }}
+<br>Dirty: {{ userForm.dirty }}
+<br>Touched: {{ userForm.touched }}
+<br>Valid: {{ userForm.valid }}
