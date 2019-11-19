@@ -76,6 +76,10 @@
                     <div class="invalid-feedback" *ngIf="userForm.get('username').hasError('maxlength')">
                             The username must be shorter than 50 characters.
                     </div>
+                    <div class="invalid-feedback" *ngIf="userForm.get('username').hasError('userNameAvailable')">
+                        The username  {{ userForm.get('username').value }} is not available.
+                    </div>
+
 
                 </div>
 
@@ -235,9 +239,9 @@
                             <div class="invalid-feedback" *ngIf="userForm.get('githubRepository').hasError('required')">
                                 Please enter your Github.
                             </div>
-                            <!-- <div class="invalid-feedback" *ngIf="userForm.get('name').hasError('minlength')">
-                                The first name must be longer than 5 characters.
-                            </div> -->
+                            <div class="invalid-feedback" *ngIf="userForm.get('githubRepository').hasError('validUrl')">
+                                Url invalid.
+                            </div>
                         </div>
                     </div>
 
@@ -247,7 +251,9 @@
                     Skills
                 </div>
                 <div class="card-body">
-                    <p class="card-text">Please add at least your three best skills!</p>
+                    <div class="alert alert-danger" role="alert" *ngIf="skills.hasError('minlength')">
+                        Please, add three skills at least.
+                    </div>
                     <div class="table-responsive-sm">
                         <table class="table table-sm">
                             <thead>
@@ -259,7 +265,8 @@
                             </thead>
                             <tbody>
                                 <ng-container formArrayName="skills"
-                                              *ngFor="let skill of skills.controls; let i=index" >
+                                              *ngFor="let skill of skills.controls; let i=index" 
+                                              #skillRow>
                                     <tr>
                                         <td>{{ i + 1 }}</td>
                                         <td>
@@ -271,6 +278,9 @@
                                                                              !skill.valid }"
                                                    id="{{ 'skill' + i }}" 
                                                    [formControlName]="i"/>
+                                            <div class="invalid-feedback" *ngIf="skill.hasError('required')">
+                                                Please enter your skill
+                                            </div>
                                         </td>
                                         <td>
                                             <button type="button" 
@@ -288,12 +298,11 @@
                 <div class="card-footer  text-right">
                     <button type="button" 
                             class="btn btn-outline-info"
-                            [disabled]="!skills.valid"
+                            [disabled]="skills.controls.length > 0 && !skills.controls[ skills.controls.length - 1 ].valid"
                             (click)="addNewSkill()">Add new skill</button>
                 </div>
+                
             </div>
-
-
             <div class="form-group row mt-3">
                 <div class="col-md-8">
 
@@ -335,10 +344,14 @@
                                    [ngClass]="{'is-invalid': (experience.get('companyName').touched ||
                                                               experience.get('companyName').dirty) &&
                                                               !experience.get('companyName').valid }" />
+
+                            <div class="invalid-feedback" *ngIf="experience.get('companyName').hasError('required')">
+                                Please enter the company name
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group row mb-2">
+                    <div class="form-group row mb-2" formGroupName="jobPeriod">
                         <label class="col-md-2 col-form-label"
                                attr.for="{{ 'from' + i }}">From</label>
 
@@ -347,9 +360,13 @@
                                    class="form-control" 
                                    id="{{ 'from' + i }}"
                                    formControlName="from"
-                                   [ngClass]="{'is-invalid': (experience.get('from').touched ||
-                                                              experience.get('from').dirty) &&
-                                                              !experience.get('from').valid }"/>
+                                   [ngClass]="{'is-invalid': (experience.get('jobPeriod.from').touched ||
+                                                              experience.get('jobPeriod.from').dirty) &&
+                                                              !experience.get('jobPeriod.from').valid }"/>
+
+                            <div class="invalid-feedback" *ngIf="experience.get('jobPeriod.from').hasError('required')">
+                                Please enter the date
+                            </div>
                         </div>
 
                         <label class="col-md-2 col-form-label" 
@@ -360,9 +377,18 @@
                                    class="form-control" 
                                    id="{{ 'to' + i }}"
                                    formControlName="to" 
-                                   [ngClass]="{'is-invalid': (experience.get('to').touched ||
-                                                              experience.get('to').dirty) &&
-                                                              !experience.get('to').valid }"/>
+                                   [ngClass]="{'is-invalid': (experience.get('jobPeriod.to').touched ||
+                                                              experience.get('jobPeriod.to').dirty) &&
+                                                              !experience.get('jobPeriod.to').valid }"/>
+
+                            <div *ngIf="experience.get('jobPeriod').hasError('dateComparer')"
+                                  class="invalid-feedback d-block">
+                                Please verify the dates
+                            </div>
+                            <div class="invalid-feedback" *ngIf="experience.get('jobPeriod.to').hasError('required')">
+                                Please enter the date
+                            </div>
+                                    
                         </div>
                     </div>
 
@@ -378,6 +404,10 @@
                                    [ngClass]="{'is-invalid': (experience.get('role').touched ||
                                                               experience.get('role').dirty) &&
                                                               !experience.get('role').valid }"/>
+                            
+                            <div class="invalid-feedback" *ngIf="experience.get('role').hasError('required')">
+                                Please enter the role
+                            </div>
                         </div>
                     </div>
 
@@ -475,7 +505,7 @@
 
         <div class="card-footer">
             <button type="button" class="btn btn-outline-primary">Back</button>
-            <button type="submit" class="btn btn-outline-success float-right">Save</button>
+            <button type="submit" class="btn btn-outline-success float-right" [disabled]="!userForm.valid">Save</button>
         </div>
 
     </form>
@@ -485,3 +515,4 @@
 <br>Dirty: {{ userForm.dirty }}
 <br>Touched: {{ userForm.touched }}
 <br>Valid: {{ userForm.valid }}
+<!-- <br><pre>{{ userForm.get('username').errors | json}}</pre> -->

@@ -1,6 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder, Validators, FormArray} from '@angular/forms';
+import { Component, OnInit, Renderer2 } from '@angular/core';
+import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { EmailValidators } from '../utils/customValidators/emailMatcher';
+import { urlValidator } from '../utils/customValidators/urlValidator';
+import { UsernameValidator } from '../utils/customValidators/usernameValidator';
+import { dateComparer } from '../utils/customValidators/dateComparerValidator';
+
+
 
 @Component({
   selector: 'app-user',
@@ -19,14 +24,27 @@ export class UserComponent implements OnInit {
     return this.userForm.get('experiences') as FormArray;
   }
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, 
+    private usernameValidator: UsernameValidator,
+    private renderer: Renderer2) { }
+
+    
+  //   this.forecastForm = new FormGroup({
+  //     dateFormatted:  new FormControl(this.forecast.dateFormatted, { validators: Validators.required, 
+  //                    asyncValidators: [this.forecastValidators.existingDateValidator(this.forecast.dateFormatted)], updateOn: 'blur' }),
+  //     temperatureC: new FormControl(this.forecast.temperatureC, [Validators.required]),
+  //     temperatureF: new FormControl(this.forecast.temperatureF),
+  //     summary: new FormControl(this.forecast.summary)
+  // });
 
   ngOnInit() {
 
     this.userForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(5)]],
       surname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
-      username: ['', [Validators.required, Validators.maxLength(50)]],
+      username: ['', { validators:  [Validators.required, Validators.maxLength(50)], 
+                       asyncValidators: [ this.usernameValidator.validate.bind(this.usernameValidator) ],  
+                       updateOn: 'blur' }],
       emailGroup: this.fb.group({
         email: ['', [Validators.required, Validators.email]],
         confirmEmail : ['', [Validators.required, Validators.email]]
@@ -37,7 +55,7 @@ export class UserComponent implements OnInit {
       comment: ['', [Validators.maxLength(100)]],
       hasDevExperience:[false],
       acceptConditions: [false, [Validators.requiredTrue]],
-      skills: this.fb.array([]),
+      skills: this.fb.array([], [Validators.minLength(3)]),
       experiences: this.fb.array([]),
       hasGitHub: [false],
       githubRepository: ['']
@@ -60,8 +78,15 @@ export class UserComponent implements OnInit {
   buildExperience(): FormGroup{
     return this.fb.group({
       companyName: ['', Validators.required],
+      jobPeriod: this.fb.group(
+        {
           from:[null, Validators.required],
-          to:[null, Validators.required],
+          to:[null, Validators.required]
+        },
+        {
+          validators : dateComparer
+        }
+      ),
           role:['', Validators.required],
           description:['']
     });
@@ -70,7 +95,7 @@ export class UserComponent implements OnInit {
  
 
   addNewExperience(){
-    this.experiences.push(this.buildExperience())
+    this.experiences.push(this.buildExperience());
   }
 
   deleteExperience(experienceIndex: number){
@@ -83,6 +108,12 @@ export class UserComponent implements OnInit {
 
   addNewSkill(){
     this.skills.push(this.buildSkill());
+
+    //@FM: set focus: TIMEOUT is neccesary to refresh DOM
+    setTimeout(() => {
+      this.renderer.selectRootElement( `#skill${this.skills.length - 1}`).focus();
+    }, 100);
+    
   }
 
   setExperienceSection(hasExperience : boolean){
@@ -96,13 +127,14 @@ export class UserComponent implements OnInit {
     const githubRepositoryControl = this.userForm.get('githubRepository');
 
     if(hasGitHub){
-      githubRepositoryControl.setValidators([Validators.required]) //TODO: URL VALIDATOR
+      githubRepositoryControl.setValidators([Validators.required, urlValidator])
     }else{
       githubRepositoryControl.clearValidators();
     }
 
     githubRepositoryControl.updateValueAndValidity();
   }
+
 
   save(){
     console.log(this.userForm);
