@@ -15,6 +15,7 @@ import { dateComparer } from '../utils/customValidators/dateComparerValidator';
 export class UserComponent implements OnInit {
 
   userForm: FormGroup;
+  messageSubmit: string;
 
   get skills(): FormArray {
     return this.userForm.get('skills') as FormArray;
@@ -29,14 +30,6 @@ export class UserComponent implements OnInit {
     private renderer: Renderer2) { }
 
     
-  //   this.forecastForm = new FormGroup({
-  //     dateFormatted:  new FormControl(this.forecast.dateFormatted, { validators: Validators.required, 
-  //                    asyncValidators: [this.forecastValidators.existingDateValidator(this.forecast.dateFormatted)], updateOn: 'blur' }),
-  //     temperatureC: new FormControl(this.forecast.temperatureC, [Validators.required]),
-  //     temperatureF: new FormControl(this.forecast.temperatureF),
-  //     summary: new FormControl(this.forecast.summary)
-  // });
-
   ngOnInit() {
 
     this.userForm = this.fb.group({
@@ -137,7 +130,13 @@ export class UserComponent implements OnInit {
 
 
   save(){
+    if(!this.userForm.valid){
+      this.messageSubmit = "Please correct the validation errors";
+      return;
+    }
+
     console.log(this.userForm);
+    this.messageSubmit = "Form is valid ;)";
   }
 
 }
