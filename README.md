@@ -16,4 +16,4 @@
 12. Duplicate elements using Form Array
 13. Form Array validations
 14. Form Groups & Form elements inside Form Array
-15. Add SSL Configuration
+15. Add SSL Configuration --> Check https://fmoralesdev.com/2020/01/03/serve-angular-app-over-https-using-angular-cli/
